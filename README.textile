@@ -6,18 +6,18 @@ h2. Using the Decorator
 
 from pytoad import pytoad_decorator
 
-bc.@pytoad_decorator()
+bc. @pytoad_decorator()
 def foobar():
 	raise Exception('banana')
 
 p. Or catch specific types of exceptions
 
-bc.@pytoad_decorator(monitored_exceptions=[StandardError, LookupError])
+bc. @pytoad_decorator(monitored_exceptions=[StandardError, LookupError])
 def foo():
 	raise StandardError('banana')
 
 h2. Usage Without Decorator
 
-bc.from pytoad import Connection
+bc. from pytoad import Connection
 connection = Connection()
 connection.send_to_hoptoad(Exception('banana'))
