@@ -1,12 +1,11 @@
 h1. Pytoad: A Hoptoad Notifier for Python
 
-p. Pytoad is a lightweight Hoptoad notifier for Python.
+p. Pytoad is a lightweight "Hoptoad":http://www.hoptoadapp.com notifier for Python.
 
 h2. Using the Decorator
 
-from pytoad import pytoad_decorator
-
-bc. @pytoad_decorator()
+bc. from pytoad import pytoad_decorator
+@pytoad_decorator()
 def foobar():
 	raise Exception('banana')
 
