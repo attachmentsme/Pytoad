@@ -1,0 +1,24 @@
+h1. Pytoad: A Hoptoad Notifier for Python
+
+p. Pytoad is a lightweight Hoptoad notifier for Python.
+
+h2. Using the Decorator
+
+from pytoad import pytoad_decorator
+
+@pytoad_decorator
+def foobar():
+	raise Exception('banana')
+
+p. Or catch specific types of exceptions
+
+@pytoad_decorator(monitored_exceptions=[StandardError, LookupError])
+def foo():
+	raise StandardError('banana')
+
+h2. Usage Without Decorator
+
+from pytoad import Connection
+
+connection = Connection()
+connection.send_to_hoptoad(Exception('banana'))

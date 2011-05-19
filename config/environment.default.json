@@ -1,0 +1,7 @@
+{
+    "name": "Fake Name",
+    "version": "1.0.0",
+    "url": "http://www.example.com",
+    "environment_name": "Fake Environment",
+    "api_key": "foobar"
+}
