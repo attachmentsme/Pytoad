@@ -6,6 +6,10 @@ h2. Configuration
 
 p. Copy _config/environment.default.json_ to _config/environment.json_ and modify the values to match your project.
 
+p. If you are using easy_install, you will need to create a config directory in your project with the _environment.json_ file.
+
+p. If you store your configuration files in a central location, you can also use the _PYTOAD_CONFIG_DIRECTORY_ environment variable to specify the location.
+
 h2. Using the Decorator
 
 bc. from pytoad import pytoad_decorator

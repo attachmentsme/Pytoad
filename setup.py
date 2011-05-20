@@ -3,7 +3,7 @@
 from setuptools import setup, find_packages
 
 setup(name="Pytoad",
-      version="1.0.0",
+      version="1.0.1",
       description="Pytoad is a lightweight Hoptoad notifier for Python.",
       author="Benjamin Coe",
       author_email="ben@attachments.me",
