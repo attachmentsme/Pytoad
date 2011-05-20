@@ -1,7 +1,7 @@
 from pytoad import Connection
 
 def pytoad_decorator(monitored_exceptions=[], PytoadConnectionClass=Connection):
-    monitored_exceptions = tuple(monitored_exceptions)
+    monitored_exceptions = tuple(monitored_exceptions) or Exception
     def wrap(f):
         def wrapped_f(*args, **kwargs):
             try:
