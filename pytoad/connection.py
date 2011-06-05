@@ -33,6 +33,16 @@ class Connection(object):
         _,_,trace = sys.exc_info()
         
         xml = XMLBuilder()
+        
+        tb_dict = {}
+        tb = traceback.extract_tb(trace)
+        
+        if tb:
+            tb = tb[0]
+            tb_dict['filename'] = tb[0]
+            tb_dict['line_number'] = tb[1]
+            tb_dict['function_name'] = tb[2]
+        
         with xml.notice(version = 2.0):
             xml << ('api-key', self.environment.api_key)
             with xml.notifier:
@@ -45,7 +55,10 @@ class Connection(object):
                 xml << ('class', exception.__class__.__name__)
                 xml << ('message', str(exception))
                 with xml.backtrace:
-                    [xml << ('line', {'file':filename, 'number':line_number, 'method':function_name}) \
-                    for filename, line_number, function_name, _ in traceback.extract_tb(trace)]
+                    xml << ('line', {
+                        'file':tb_dict.get('filename', 'unknown'),
+                        'number':tb_dict.get('line_number', 'unknown'),
+                        'method':tb_dict.get('function_name', 'unknown')
+                    })
                 
         return str(xml)
