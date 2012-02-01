@@ -4,7 +4,7 @@ def pytoad_decorator(monitored_exceptions=[], PytoadConnectionClass=Connection):
     def wrap(f):
         def wrapped_f(*args, **kwargs):
             try:
-                f(*args, **kwargs)
+                return f(*args, **kwargs)
             except Exception, e:
                 if e.__class__ in monitored_exceptions or not monitored_exceptions:
                     connection = PytoadConnectionClass()

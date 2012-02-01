@@ -22,6 +22,16 @@ class TestDecorator(unittest.TestCase):
         foobar()
         
         self.assertTrue( MockPytoadConnection.exceptions )
+        
+    def test_decorated_functions_return(self):
+        
+        MockPytoadConnection.exceptions = []
+        
+        @pytoad_decorator(PytoadConnectionClass=MockPytoadConnection)
+        def foobar():
+            return 'foobar'
+                
+        self.assertEqual( foobar(), 'foobar' )
     
     def test_decorator_catches_only_monitored_exceptions_if_provided(self):
         
