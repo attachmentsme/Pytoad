@@ -10,10 +10,11 @@ class Connection(object):
         self.hoptoad_url = self._get_hoptoad_url()
         
     def _get_hoptoad_url(self):
+        url_suffix = 'airbrake.io/notifier_api/v2/notices'
         if self.use_ssl:
-            return "https://hoptoadapp.com/notifier_api/v2/notices"
+            return "https://%s" % url_suffix
         else:
-            return "http://hoptoadapp.com/notifier_api/v2/notices"
+            return "http://%s" % url_suffix
         
     def send_to_hoptoad(self, exception):
         headers = { 'Content-Type': 'text/xml' }
