@@ -10,6 +10,6 @@ setup(name="Pytoad",
       entry_points = {},
       url="https://github.com/attachmentsme/Pytoad",
       packages = find_packages(),
-      install_requires = ['xmlbuilder', 'simplejson'],
+      install_requires = ['xmlbuilder==0.9', 'simplejson'],
       tests_require=['nose', 'coverage', 'mock']
 )
