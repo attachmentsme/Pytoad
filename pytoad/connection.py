@@ -3,11 +3,25 @@ from pytoad.environment import Environment
 from xmlbuilder import XMLBuilder
 
 class Connection(object):
-        
-    def __init__(self, use_ssl=True):
-        self.use_ssl = use_ssl
-        self.environment = Environment()
+    
+    INSTANCE_VARIABLES = ['use_ssl', 'api_key', 'environment_name', 'name', 'version', 'url']
+    
+    def __init__(self, **kwargs):
+        self.use_ssl = True
+        self._load_instance_variables(kwargs)
+        self._load_environment_variables()
         self.hoptoad_url = self._get_hoptoad_url()
+    
+    def _load_instance_variables(self, kwargs):
+        for k, v in kwargs.items():
+            if  k in self.INSTANCE_VARIABLES:
+                self.__dict__[k] = v
+                
+    def _load_environment_variables(self):
+        self.environment = Environment()
+        for k in self.INSTANCE_VARIABLES:
+            if not self.__dict__.get(k, None) and self.environment.__dict__.get(k, None):
+                self.__dict__[k] = self.environment.__dict__[k]
         
     def _get_hoptoad_url(self):
         url_suffix = 'airbrake.io/notifier_api/v2/notices'
@@ -16,9 +30,9 @@ class Connection(object):
         else:
             return "http://%s" % url_suffix
         
-    def send_to_hoptoad(self, exception):
+    def send_to_hoptoad(self, exception, additional_information=None):
         headers = { 'Content-Type': 'text/xml' }
-        request = urllib2.Request(self.hoptoad_url, self._generate_xml(exception), headers)
+        request = urllib2.Request(self.hoptoad_url, self._generate_xml(exception, additional_information), headers)
         response = urllib2.urlopen(request)
         status = response.getcode()
         if status == 200:
@@ -30,7 +44,7 @@ class Connection(object):
         if status == 500:
             raise Exception("Hoptoad has hopped the toad")
 
-    def _generate_xml(self, exception):
+    def _generate_xml(self, exception, additional_information=None):
         _,_,trace = sys.exc_info()
         
         xml = XMLBuilder()
@@ -44,17 +58,21 @@ class Connection(object):
             tb_dict['line_number'] = tb[1]
             tb_dict['function_name'] = tb[2]
         
+        message = str(exception)
+        if additional_information:
+            message = 'error: %s, additional info: %s' % (message, additional_information)
+        
         with xml.notice(version = 2.0):
-            xml << ('api-key', self.environment.api_key)
+            xml << ('api-key', self.api_key)
             with xml.notifier:
-                xml << ('name', self.environment.name)
-                xml << ('version', self.environment.version)
-                xml << ('url', self.environment.url)
+                xml << ('name', self.name)
+                xml << ('version', self.version)
+                xml << ('url', self.url)
             with xml('server-environment'):
-                xml << ('environment-name', self.environment.environment_name)
+                xml << ('environment-name', self.environment_name)
             with xml.error:
                 xml << ('class', exception.__class__.__name__)
-                xml << ('message', str(exception))
+                xml << ('message', message)
                 with xml.backtrace:
                     xml << ('line', {
                         'file':tb_dict.get('filename', 'unknown'),

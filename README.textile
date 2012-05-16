@@ -26,5 +26,5 @@ def foo():
 h2. Usage Without Decorator
 
 bc. from pytoad import Connection
-connection = Connection()
-connection.send_to_hoptoad(Exception('banana'))
+connection = Connection(name="Project Name", version="Software Version", environment_name="production", api_key="API-KEY")
+connection.send_to_hoptoad(Exception('banana'), additional_information="additional debug info.")
