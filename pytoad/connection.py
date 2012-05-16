@@ -5,9 +5,11 @@ from xmlbuilder import XMLBuilder
 class Connection(object):
     
     INSTANCE_VARIABLES = ['use_ssl', 'api_key', 'environment_name', 'name', 'version', 'url']
+    TIMEOUT = 5
     
     def __init__(self, **kwargs):
         self.use_ssl = True
+        self.logger = None
         self._load_instance_variables(kwargs)
         self._load_environment_variables()
         self.hoptoad_url = self._get_hoptoad_url()
@@ -31,19 +33,25 @@ class Connection(object):
             return "http://%s" % url_suffix
         
     def send_to_hoptoad(self, exception, additional_information=None):
-        headers = { 'Content-Type': 'text/xml' }
-        request = urllib2.Request(self.hoptoad_url, self._generate_xml(exception, additional_information), headers)
-        response = urllib2.urlopen(request)
-        status = response.getcode()
-        if status == 200:
-            pass
-        if status == 403:
-            raise Exception("Cannot use SSL")
-        if status == 422:
-            raise Exception("Invalid XML sent to Hoptoad")
-        if status == 500:
-            raise Exception("Hoptoad has hopped the toad")
-
+        try:
+            headers = { 'Content-Type': 'text/xml' }
+            request = urllib2.Request(self.hoptoad_url, self._generate_xml(exception, additional_information), headers)
+            response = urllib2.urlopen(request, timeout=self.TIMEOUT)
+            status = response.getcode()
+            if status == 200:
+                pass
+            if status == 403:
+                raise Exception("Cannot use SSL")
+            if status == 422:
+                raise Exception("Invalid XML sent to Hoptoad")
+            if status == 500:
+                raise Exception("Hoptoad has hopped the toad")
+        except Exception, e:
+            if self.logger:
+                self.logger.warn(str(e))
+            else:
+                print str(e)
+            
     def _generate_xml(self, exception, additional_information=None):
         _,_,trace = sys.exc_info()
         
